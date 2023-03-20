@@ -15,6 +15,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
+  bool isLoading = false;
   String email = '';
   String password = '';
 
@@ -68,6 +69,10 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.lightBlueAccent,
               label: 'Log In',
               onPressed: () async {
+                setState(() {
+                  isLoading = true;
+                });
+
                 try {
                   final loggedUser = await _auth.signInWithEmailAndPassword(
                     email: email,
@@ -80,6 +85,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 } catch (e) {
                   print(e);
                 }
+
+                setState(() {
+                  isLoading = false;
+                });
               },
             ),
           ],
