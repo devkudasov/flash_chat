@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
+import 'package:flash_chat/widgets/messages_stream.dart';
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -16,6 +17,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final TextEditingController textEditingController = TextEditingController();
 
   User? loggedInUser;
   String message = '';
@@ -56,6 +58,9 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            MessagesStream(
+              currentUser: loggedInUser,
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -63,6 +68,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: textEditingController,
                       onChanged: (value) {
                         message = value;
                       },
@@ -73,6 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     onPressed: () {
                       _firestore.collection('messages').add(
                           {'sender': loggedInUser?.email, 'text': message});
+                      textEditingController.clear();
                     },
                     child: const Text(
                       'Send',
